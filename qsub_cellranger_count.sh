@@ -128,7 +128,7 @@ if [[ ${intype} == "file" ]] ; then
   while read fqdir ; do
     for fq in $(ls -1 ${fqdir}/*fastq.gz) ; do
         # Copy file straight over if name is in correct format
-        if [[ ${fq} == *"_S"* ]] && [[ ${fq} == *"_L00"* ]] && [[ ( ${fq} == *"_R1"* ) || ( ${fq} == *"_R2"* ) ]] ; then
+        if [[ ${fq} == *"_S"* ]] && [[ ${fq} == *"_L00"* ]] && [[ ( ${fq} == *"_R1"* ) || ( ${fq} == *"_R2"* ) || ( ${fq} == *"_I1"* )]] ; then
           sample=$(basename ${fq} | sed 's/_L.*//g' | sed 's/_S[1:9]//g' | sed 's/_[1:9].fastq.gz//g')
           echo "${sample}" >> ${tfile}
           cp ${fq} ${tmp_dir}
@@ -156,11 +156,11 @@ if [[ ${intype} == "file" ]] ; then
             lane="L001"
           fi
           # Infer read number
-          if [[ ( ${fq} == *"_R1"* ) || ( ${fq} == *"_R2"* ) ]] ; then
-            read=$(basename ${fq} | sed 's+.*_R+R+' | cut -d'_' -f1)
-          elif [[ ( ${fq} == *"_1_"* ) || ( ${fq} == *"_1."* ) ]] ; then
+          if [[ ( ${fq} == *"_I1"* ) ]] ; then
+            read="I1"
+          elif [[ ( ${fq} == *"_R1"* ) || ( ${fq} == *"_1_"* ) || ( ${fq} == *"_1."* ) ]] ; then
             read="R1"
-          elif [[ ( ${fq} == *"_2_"* ) || ( ${fq} == *"_2."* ) ]] ; then
+          elif [[ ( ${fq} == *"_R2"* ) || ( ${fq} == *"_2_"* ) || ( ${fq} == *"_2."* ) ]] ; then
             read="R2"
           else echo "  ERROR: Cannot infer read number for renaming of file: ${fq}" >> ${log}
             echo "  Please manually rename file to contain read number (i.e. R1)" >> ${log}
@@ -180,7 +180,7 @@ fi
 if [[ ${intype} == "directory" ]] ; then
   for fq in $(ls -1 ${input}/*fastq.gz) ; do
     # Copy file if file name is in correct format
-    if [[ ${fq} == *"_S"* ]] && [[ ${fq} == *"_L00"* ]] && [[ ( ${fq} == *"_R1"* ) || ( ${fq} == *"_R2"* ) ]] ; then
+    if [[ ${fq} == *"_S"* ]] && [[ ${fq} == *"_L00"* ]] && [[ ( ${fq} == *"_R1"* ) || ( ${fq} == *"_R2"* ) || ( ${fq} == *"_I1"* ) ]] ; then
       sample=$(basename ${fq} | sed 's/_L.*//g' | sed 's/_S[1:9]//g' | sed 's/_[1:9].fastq.gz//g')
       echo "${sample}" >> ${tfile}
       echo -e "${fq}\t${tmp_dir}$(basename ${fq})" >> ${names}
@@ -208,11 +208,11 @@ if [[ ${intype} == "directory" ]] ; then
         lane="L001"
       fi
       # Infer read number
-      if [[ ( ${fq} == *"_R1"* ) || ( ${fq} == *"_R2"* ) ]] ; then
-        read=$(basename ${fq} | sed 's+.*_R+R+' | cut -d'_' -f1)
-      elif [[ ( ${fq} == *"_1_"* ) || ( ${fq} == *"_1."* ) ]] ; then
+      if [[ ( ${fq} == *"_I1"* ) ]] ; then
+        read="I1"
+      elif [[ ( ${fq} == *"_R1"* ) || ( ${fq} == *"_1_"* ) || ( ${fq} == *"_1."* ) ]] ; then
         read="R1"
-      elif [[ ( ${fq} == *"_2_"* ) || ( ${fq} == *"_2."* ) ]] ; then
+      elif [[ ( ${fq} == *"_R2"* ) || ( ${fq} == *"_2_"* ) || ( ${fq} == *"_2."* ) ]] ; then
         read="R2"
       else echo "  ERROR: Cannot infer read number for renaming of file: ${fq}" >> ${log}
         echo "  Please manually rename file to contain read number (i.e. R1)" >> ${log}
