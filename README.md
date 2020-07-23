@@ -24,7 +24,7 @@ Options:
 ```
 ## Input
 
-The input can be either the path to one directory containing multiple fastqs, or the path to a text file containing a list of directories. When supplying a file containing a list of fastq-containing directories, it is assumed that the directory name is the name of the sample to be analysed. 
+The input `-i` can be either the path to one directory containing multiple fastqs, or the path to a text file containing a list of directories. When supplying a file containing a list of fastq-containing directories, it is assumed that the directory name is the name of the sample to be analysed. 
 
 Example input file:
 ```
@@ -58,7 +58,7 @@ You can also follow [instructions](https://support.10xgenomics.com/single-cell-g
 
 It is recommended that you leave this setting on default unless an error occurs.
 
-As default, Cell Ranger automatically detects assay configuration. However there may be occasions where automatic detection is not possible. In which case please specify one of the following options:
+As default, Cell Ranger automatically detects assay configuration. However there may be occasions where automatic detection is not possible. In which case please specify one of the following with the `-c` option:
 
 + `threeprime` for Single Cell 3′,
 + `fiveprime` for Single Cell 5′,
@@ -70,9 +70,9 @@ As default, Cell Ranger automatically detects assay configuration. However there
 
 ## Output
 
-You can set an output directory with this option, by default data will be stored in your $HOME directory.
+You can set an output directory with the `-o` option, by default data will be stored in your $HOME directory.
 
-## Output files 
+### Output files 
 ### [From Cell Ranger guide](https://support.10xgenomics.com/single-cell-gene-expression/software/pipelines/latest/using/count)
 
 A successful `cellranger count` run should conclude with a message similar to this (this will be found in the log file written in the output directory):
