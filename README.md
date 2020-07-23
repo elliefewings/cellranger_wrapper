@@ -43,10 +43,10 @@ Example input directory:
 $ ls /home/directory/input
 sample1_S1_L001_R1_001.fastq.gz sample1_S1_L001_R2_001.fastq.gz
 sample1_S1_L002_R1_001.fastq.gz sample1_S1_L002_R2_001.fastq.gz
-sample1_S2_L001_R1_001.fastq.gz sample1_S2_L001_R2_001.fastq.gz
-sample1_S2_L002_R1_001.fastq.gz sample1_S2_L002_R2_001.fastq.gz
-sample1_S3_L001_R1_001.fastq.gz sample1_S3_L001_R2_001.fastq.gz
-sample1_S3_L002_R1_001.fastq.gz sample1_S3_L002_R2_001.fastq.gz
+sample2_S2_L001_R1_001.fastq.gz sample2_S2_L001_R2_001.fastq.gz
+sample2_S2_L002_R1_001.fastq.gz sample2_S2_L002_R2_001.fastq.gz
+sample3_S3_L001_R1_001.fastq.gz sample3_S3_L001_R2_001.fastq.gz
+sample3_S3_L002_R1_001.fastq.gz sample3_S3_L002_R2_001.fastq.gz
 ```
 ## Reference
 
