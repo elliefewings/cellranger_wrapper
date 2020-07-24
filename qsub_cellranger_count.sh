@@ -129,10 +129,9 @@ if [[ ${intype} == "file" ]] ; then
     for fq in $(ls -1 ${fqdir}/*fastq.gz) ; do
         # Copy file straight over if name is in correct format
         if [[ ${fq} == *"_S"* ]] && [[ ${fq} == *"_L00"* ]] && [[ ( ${fq} == *"_R1"* ) || ( ${fq} == *"_R2"* ) || ( ${fq} == *"_I1"* )]] ; then
-          sample=$(basename ${fq} | sed 's/_L.*//g' | sed 's/_S[1:9]//g' | sed 's/_[1:9].fastq.gz//g')
+          sample=$(basename ${fq} | sed 's/_L.*//g' | sed 's/_S[1-9]//g' | sed 's/_[1-9].fastq.gz//g')
           echo "${sample}" >> ${tfile}
           cp ${fq} ${tmp_dir}
-          echo -e "${fq}\t${tmp_dir}$(basename ${fq})" >> ${names}
         else
           echo "    Incorrect fastq naming format for ${fq}. Renaming file" >> ${log}
           # Infer sample name from directory name
@@ -181,14 +180,13 @@ if [[ ${intype} == "directory" ]] ; then
   for fq in $(ls -1 ${input}/*fastq.gz) ; do
     # Copy file if file name is in correct format
     if [[ ${fq} == *"_S"* ]] && [[ ${fq} == *"_L00"* ]] && [[ ( ${fq} == *"_R1"* ) || ( ${fq} == *"_R2"* ) || ( ${fq} == *"_I1"* ) ]] ; then
-      sample=$(basename ${fq} | sed 's/_L.*//g' | sed 's/_S[1:9]//g' | sed 's/_[1:9].fastq.gz//g')
+      sample=$(basename ${fq} | sed 's/_L.*//g' | sed 's/_S[1-9]//g' | sed 's/_[1-9].fastq.gz//g')
       echo "${sample}" >> ${tfile}
-      echo -e "${fq}\t${tmp_dir}$(basename ${fq})" >> ${names}
       cp ${fq} ${tmp_dir}
     else
       echo "  Incorrect fastq naming format for ${fq}. Renaming file" >> ${log}
       # Infer sample name from previous file name
-      sample=$(basename ${fq} | sed 's/_L.*//g' | sed 's/_S[1:9]//g' | sed 's/_[1:9].fastq.gz//g')
+      sample=$(basename ${fq} | sed 's/_L.*//g' | sed 's/_S[1-9]//g' | sed 's/_[1-9].fastq.gz//g')
       # Infer lane number
       if [ $(ls -1 ${input}/${sample}*fastq.gz | wc -l) -gt 2 ] ; then
         oldlane=$(basename ${fq} | sed 's+.*L+L+' | cut -d'_' -f1)
