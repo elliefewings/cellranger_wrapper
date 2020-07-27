@@ -10,6 +10,7 @@
 #PBS -l walltime=15:00:00
 # Resources, ... and one node with 4 processors:
 #PBS -l nodes=1:ppn=4
+#PBS -l mem=100gb
 # stderr redirection
 #PBS -e cellranger_count.err
 # stdout redirection
