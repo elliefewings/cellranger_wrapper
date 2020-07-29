@@ -9,7 +9,7 @@
 # Resources, e.g. a total time of 15 hours...
 #PBS -l walltime=15:00:00
 # Resources, ... and one node with 4 processors:
-#PBS -l nodes=1:ppn=4
+#PBS -l nodes=1:ppn=8
 #PBS -l mem=100gb
 # stderr redirection
 #PBS -e cellranger_count.err
@@ -41,7 +41,7 @@ echo "" >> ${log}
 echo "Job name: cellranger_count" >> ${log}
 echo "Time allocated: 15:00:00" >> ${log}
 echo "Time of submission: $(date +"%T %D")" >> ${log}
-echo "Resources allocated: nodes=1:ppn=4" >> ${log}
+echo "Resources allocated: nodes=1:ppn=8" >> ${log}
 echo "User: ${PBS_O_LOGNAME}" >> ${log}
 echo "Log: ${log}" >> ${log}
 echo "Input: ${input}" >> ${log}
@@ -130,7 +130,7 @@ if [[ ${intype} == "file" ]] ; then
     for fq in $(ls -1 ${fqdir}/*fastq.gz) ; do
         # Copy file straight over if name is in correct format
         if [[ ${fq} == *"_S"* ]] && [[ ${fq} == *"_L00"* ]] && [[ ( ${fq} == *"_R1"* ) || ( ${fq} == *"_R2"* ) || ( ${fq} == *"_I1"* )]] ; then
-          sample=$(basename ${fq} | sed 's/_L.*//g' | sed 's/_S[1-9]//g' | sed 's/_[1-9].fastq.gz//g')
+          sample=$(basename ${fq} | sed 's/_L.*//g' | sed 's/_S[1-9]*//g' | sed 's/_[1-9].fastq.gz//g')
           echo "${sample}" >> ${tfile}
           cp ${fq} ${tmp_dir}
         else
@@ -181,13 +181,13 @@ if [[ ${intype} == "directory" ]] ; then
   for fq in $(ls -1 ${input}/*fastq.gz) ; do
     # Copy file if file name is in correct format
     if [[ ${fq} == *"_S"* ]] && [[ ${fq} == *"_L00"* ]] && [[ ( ${fq} == *"_R1"* ) || ( ${fq} == *"_R2"* ) || ( ${fq} == *"_I1"* ) ]] ; then
-      sample=$(basename ${fq} | sed 's/_L.*//g' | sed 's/_S[1-9]//g' | sed 's/_[1-9].fastq.gz//g')
+      sample=$(basename ${fq} | sed 's/_L.*//g' | sed 's/_S[1-9]*//g' | sed 's/_[1-9].fastq.gz//g')
       echo "${sample}" >> ${tfile}
       cp ${fq} ${tmp_dir}
     else
       echo "  Incorrect fastq naming format for ${fq}. Renaming file" >> ${log}
       # Infer sample name from previous file name
-      sample=$(basename ${fq} | sed 's/_L.*//g' | sed 's/_S[1-9]//g' | sed 's/_[1-9].fastq.gz//g')
+      sample=$(basename ${fq} | sed 's/_L.*//g' | sed 's/_S[1-9]*//g' | sed 's/_[1-9].fastq.gz//g')
       # Infer lane number
       if [ $(ls -1 ${input}/${sample}*fastq.gz | wc -l) -gt 2 ] ; then
         oldlane=$(basename ${fq} | sed 's+.*L+L+' | cut -d'_' -f1)
@@ -283,7 +283,7 @@ for sample in $(cat ${sfile}) ; do
                    --sample=${sample} \
                    --expect-cells=1000 \
                    --chemistry=${chem} \
-                   --localcores=4 >> ${log}
+                   --localcores=8 >> ${log}
 done
 
 echo "Cell ranger complete: $(date +%T)" >> ${log}
