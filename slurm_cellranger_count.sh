@@ -1,20 +1,19 @@
-#!/bin/bash
+#!/usr/local_rwth/bin/zsh
 ## Run count function of cell ranger align, process and quantify scRNAseq data. Takes one directory containing all fastqs or file containing list of directories with fastqs, one directory per line. Output location is optional. If not supplied, output will be stored in home directory.
 ## Caveat: If list of directories is supplied, it is assumed that each directory is a sample. If necassary, the directory name is used as a sample name for renaming purposes
 ## For easy usage, submit job with ./cellranger.sh script
 ## Usage: qsub ./qsub_cellranger_count.sh -v input=/path/to/file/or/directory,ref=/path/to/reference/transcriptome,output=/path/to/desired/output/location[optional],chem=sequencingchemistry[optional]
 
 # Job Name
-#PBS -N cellranger_count
+#SBATCH --job-name="cellranger_count"
 # Resources, e.g. a total time of 15 hours...
-#PBS -l walltime=15:00:00
+#SBATCH --time=15:00:00
 # Resources, ... and one node with 4 processors:
-#PBS -l nodes=1:ppn=8
-#PBS -l mem=100gb
-# stderr redirection
-#PBS -e cellranger_count.err
-# stdout redirection
-#PBS -o cellranger_count.log
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=8
+#SBATCH --mem 100000
+#SBATCH --mail-user=eleanor.fewings@bioquant.uni-heidelberg.de
+
 
 ################
 ## Create log ##
@@ -55,6 +54,9 @@ echo "Output: ${outdir}" >> ${log}
 
 # Load cell ranger module
 module load bio/cellranger/3.0.2
+
+# Load scRNA environment
+conda activate scRNA_env
 
 
 ###########
@@ -287,6 +289,40 @@ for sample in $(cat ${sfile}) ; do
 done
 
 echo "Cell ranger complete: $(date +%T)" >> ${log}
+
+##########################
+## Cite-seq hashtagging ##
+##########################
+
+# If hashtag mode implemented
+if [[ ${hashtag} != "" ]] ; then
+
+  # Write to log
+  echo "" >> ${log}
+  echo "----------------------" >> ${log}
+  echo " Cite-seq hashtagging " >> ${log}
+  echo "----------------------" >> ${log}
+  echo "" >> ${log}
+
+# Run Cite-seq per sample
+  for sample in $(cat ${sfile}) ; do
+    fq1="${tmp_dir}/merged_${sample}_R1.fastq.gz"
+    fq2="${tmp_dir}/merged_${sample}_R2.fastq.gz"
+    sout=$(ls -d ${outdir}/${sample}*/)
+    # Create one fastq per sample in case of many lanes
+    cat ${tmp_dir}/${sample}*R1*fastq.gz > ${fq1}
+    cat ${tmp_dir}/${sample}*R2*fastq.gz > ${fq2}
+    echo "  Running Cite-seq hashtagging on: ${sample}" >> ${log}
+    CITE-seq-Count -R1 ${fq1} \
+                   -R2 ${fq2} \
+                   -t ${hashtag} \
+                   -cbf 1 -cbl 16 -umif 17 -umil 26 \
+                   -cells 1000 \
+                   -o ${sout} \
+                   -T 8 >> ${log}
+  done
+fi
+      
 
 ###############
 ## Finishing ##
