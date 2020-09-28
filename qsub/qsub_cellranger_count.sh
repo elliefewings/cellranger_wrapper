@@ -19,6 +19,8 @@
 # Source bashrc
 source ~/.bashrc
 
+module load bio/cellranger/3.0.2
+
 # Load conda environment if requested
 if [[ ! -z ${conda}  ]]; then
   conda activate ${conda}

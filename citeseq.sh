@@ -26,7 +26,7 @@ set -e
 helpFunction()
 {
   echo ""
-  echo "Program: citeseq count"
+  echo "Program: CITE-seq-Count"
   echo ""
   echo "Version: 0.1"
   echo ""
@@ -36,7 +36,7 @@ helpFunction()
       echo -e "\t-i\tInput: Path to directory containing all fastqs or file containing list of directories with fastqs, one directory per line [required]"
       echo -e "\t-o\tOutput directory: Path to location where output will be generated [default=HOME]"
       echo -e "\t-t\tPath to csv containing hashtag antibody barcodes and respective names [required]"
-      echo -e "\t-c\tConda environment: Name of conda environment with STAR installed (unless it is available on path) [default=PATH]"
+      echo -e "\t-c\tConda environment: Name of conda environment with CITE-seq-Count installed (unless it is available on path) [default=PATH]"
       echo -e "\t-h\tHelp: Does what it says on the tin"
   echo ""
 }

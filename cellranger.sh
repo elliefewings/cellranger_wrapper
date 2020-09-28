@@ -6,6 +6,9 @@
 # Running:
 # ./cellranger.sh -i <input file or directory> -r <reference trancriptome> -o <output location>[optional] -s <sequencing chemistry>[optional] -c <conda environment>[optional] -h <help>
 
+# Source bashrc
+source ~/.bashrc
+
 # Set abort function
 abort()
 {
@@ -34,7 +37,7 @@ helpFunction()
       echo -e "\t-r\tReference transcriptome: Path to directory containing reference transcriptome [required]"
       echo -e "\t-o\tOutput directory: Path to location where output will be generated [default=$HOME]"
       echo -e "\t-s\tSequencing chemistry: Sequencing chemistry used in assay (see cellranger count --chemistry options for details). Should be left on 'autodetect' mode (default) unless error occurs [default=auto]"
-      echo -e "\t-c\tConda environment: Name of conda environment with STAR installed (unless it is available on path) [default=PATH]"
+      echo -e "\t-c\tConda environment: Name of conda environment with Cellranger installed (unless it is available on path or from module) [default=module]"
       echo -e "\t-h\tHelp: Does what it says on the tin"
   echo ""
 }
