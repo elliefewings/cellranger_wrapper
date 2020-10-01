@@ -10,7 +10,7 @@
 #PBS -l walltime=15:00:00
 # Resources, ... and one node with 4 processors:
 #PBS -l nodes=1:ppn=8
-#PBS -l mem=100gb
+#PBS -l mem=64gb
 # stderr redirection
 #PBS -e cellranger_count.err
 # stdout redirection
@@ -27,7 +27,7 @@ if [[ ! -z ${conda}  ]]; then
 fi
 
 # Create sample slog
-sslog="${tmp_dir}/${sample}_cellranger.slog"
+slog="${tmp_dir}/${sample}_cellranger.slog"
 
 #################
 ## Cell Ranger ##

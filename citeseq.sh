@@ -178,7 +178,69 @@ fi
 cut ${tfile} -f1 | sort -u > ${sfile}
 
 #Submit to cluster
-while read sample ; do
+while read -u 3 sample ; do
+  
+  #Ask for whitelist
+  echo "Do you want to submit whitelist barcodes for sample ${sample}? [Y/N]"
+  read answer
+  
+  #Check if answer is yes or no
+  while [[ ${answer} != "Y" ]] && [[ ${answer} != "y" ]] && [[ ${answer} != "N" ]] && [[ ${answer} != "n" ]] ; do
+    echo "Please respond with [Y/N]"
+    echo "Do you want to submit whitelist barcodes for sample ${sample}? [Y/N]"
+    read answer
+  done
+  
+  #If user repsponds yes, prompt for path
+  if [[ ${answer} == "Y" ]] || [[ ${answer} == "y" ]] ; then
+    echo "Enter path for cellranger barcodes.tsv[.gz] file:"
+    read barcodes
+    barcodes=$(echo ${barcodes} | sed -e 's+\"++g' -e "s+\'++g" )
+    #Check if path exists, if not ask again if they want to submit path
+    while [[ ! -e ${barcodes} ]] && ([[ ${answer} == "Y" ]] || [[ ${answer} == "y" ]]) ; do
+      echo "Couldn't find barcodes file."
+      echo "Do you want to submit whitelist barcodes for sample ${sample}? [Y/N]"
+      read answer
+      #Check if answer is yes or no
+      while [[ ${answer} != "Y" ]] && [[ ${answer} != "y" ]] && [[ ${answer} != "N" ]] && [[ ${answer} != "n" ]] ; do
+        echo "Please respond with [Y/N]"
+        echo "Do you want to submit whitelist barcodes for sample ${sample}? [Y/N]"
+        read answer
+      done
+      if [[ ${answer} == "Y" ]] || [[ ${answer} == "y" ]] ; then 
+        echo "Enter path for cellranger barcodes.tsv[.gz] file:"
+        read barcodes
+        barcodes=$(echo ${barcodes} | sed -e 's+\"++g' -e "s+\'++g" )
+      fi
+    done
+    #Check if file is barcodes file
+    while [[ ${barcodes} != *barcodes.tsv* ]] && ([[ ${answer} == "Y" ]] || [[ ${answer} == "y" ]]) ; do
+      echo "Please submit a cellranger barcodes.tsv[.gz] file."
+      echo "Do you want to submit whitelist barcodes for sample ${sample}? [Y/N]"
+      read answer
+      #Check if answer is yes or no
+      while [[ ${answer} != "Y" ]] && [[ ${answer} != "y" ]] && [[ ${answer} != "N" ]] && [[ ${answer} != "n" ]] ; do
+        echo "Please respond with [Y/N]"
+        echo "Do you want to submit whitelist barcodes for sample ${sample}? [Y/N]"
+        read answer
+      done
+      if [[ ${answer} == "Y" ]] || [[ ${answer} == "y" ]] ; then 
+        echo "Enter path for cellranger barcodes.tsv[.gz] file:"
+        read barcodes
+        barcodes=$(echo ${barcodes} | sed -e 's+\"++g' -e "s+\'++g" )
+      fi
+    done
+    
+      #If user answers yes and submits file, move on
+    if [[ ${answer} == "Y" ]] || [[ ${answer} == "y" ]] ; then
+        barcodes=$(realpath ${barcodes})
+        echo "Submitting sample with barcodes"
+    fi
+  elif [[ ${answer} == "N" ]] || [[ ${answer} == "n" ]] ; then
+    echo "Submitting sample without barcodes"
+  fi
+
+  #Submit
   echo "Submitting to cluster: ${sample}" >> ${log}
-  qsub "${loc}/qsub/qsub_citeseq_count.sh" -v sample=${sample},outdir=${outdir},tmp_dir=${tmp_dir},log=${log},citeseq=${citeseq},conda=${conda},hashtag=${hashtag}
-done < ${sfile}
+  qsub "${loc}/qsub/qsub_citeseq_count.sh" -v sample=${sample},outdir=${outdir},tmp_dir=${tmp_dir},log=${log},citeseq=${citeseq},conda=${conda},hashtag=${hashtag},answer=${answer},barcodes=${barcodes}
+done 3< ${sfile}

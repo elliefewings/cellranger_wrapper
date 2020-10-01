@@ -2,15 +2,15 @@
 ## Run CITE-Seq-count for RNAseq data. Takes one directory containing all fastqs or file containing list of directories with fastqs, one directory per line. Output location is optional. If not supplied, output will be stored in home directory.
 ## Caveat: If list of directories is supplied, it is assumed that each directory is a sample
 ## For easy usage, submit job with ./citeseq.sh script
-## Usage: qsub ./qsub_citeseq_count.sh -v sample=${sample},outdir=${outdir},tmp_dir=${tmp_dir},log=${log},citeseq=${citeseq},conda=${conda},hashtag=${hashtag}
+## Usage: qsub ./qsub_citeseq_count.sh -v sample=${sample},outdir=${outdir},tmp_dir=${tmp_dir},log=${log},citeseq=${citeseq},conda=${conda},hashtag=${hashtag},answer=${answer},barcodes=${barcodes}
 
 # Job Name
 #PBS -N Citeseq_count
 # Resources, e.g. a total time of 15 hours...
 #PBS -l walltime=15:00:00
 # Resources, ... and one node with 4 processors:
-#PBS -l nodes=1:ppn=8
-#PBS -l mem=100gb
+#PBS -l nodes=1:ppn=4
+#PBS -l mem=64gb
 # stderr redirection
 #PBS -e Citeseq_count.err
 # stdout redirection
@@ -52,13 +52,37 @@ else
   fq2=$(cat "${tmp_dir}/samples.tmp.txt" | grep ${sample} | cut -f2 | grep "_R1" )
 fi
 
-# Count
-CITE-seq-Count -R1 ${fq1} \
-               -R2 ${fq2} \
-               -t ${hashtag} \
-               -cbf 1 -cbl 16 -umif 17 -umil 28 \
-               -cells 1000 \
-               -o ${sout} \
-               --debug \
-               -T 8 >> ${slog}
+# Find out if barcodes mode is implemented
+if [[ ${answer} == "Y" ]] || [[ ${answer} == "y" ]] ; then
+  
+  echo "" >> ${slog} 
+  echo "Run command:" >> ${slog} 
+  echo "CITE-seq-Count -R1 ${fq1} -R2 ${fq2}" >> ${slog} 
+  echo "-t ${hashtag} -cbf 1 -cbl 16 -umif 17 -umil 28" >> ${slog} 
+  echo "-wl ${barcodes} -o ${sout}" >> ${slog} 
+  echo "" >> ${slog} 
+  
+  # Count with whitelist
+  CITE-seq-Count -R1 ${fq1} \
+                 -R2 ${fq2} \
+                 -t ${hashtag} \
+                 -cbf 1 -cbl 16 -umif 17 -umil 28 \
+                 -wl ${barcodes} \
+                 -o ${sout} >> ${slog}  
+else
+  echo "" >> ${slog} 
+  echo "Run command:" >> ${slog} 
+  echo "CITE-seq-Count -R1 ${fq1} -R2 ${fq2}" >> ${slog} 
+  echo "-t ${hashtag} -cbf 1 -cbl 16 -umif 17 -umil 28" >> ${slog} 
+  echo "-cells 1000 -o ${sout}" >> ${slog} 
+  echo "" >> ${slog} 
+  
+  # Count with cells feature
+  CITE-seq-Count -R1 ${fq1} \
+                 -R2 ${fq2} \
+                 -t ${hashtag} \
+                 -cbf 1 -cbl 16 -umif 17 -umil 28 \
+                 -cells 1000 \
+                 -o ${sout} >> ${slog}
+fi
                
