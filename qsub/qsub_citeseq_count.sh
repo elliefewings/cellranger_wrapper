@@ -54,12 +54,20 @@ fi
 
 # Find out if barcodes mode is implemented
 if [[ ${answer} == "Y" ]] || [[ ${answer} == "y" ]] ; then
+
+# Find out if barcodes are zipped
+  if [[ ${barcodes} == *"arcodes.tsv.gz" ]] ; then
+    bdir=$(dirname ${barcodes})
+    unzipped="${bdir}/barcodes.tsv"
+    gunzip -c ${barcodes} > ${unzipped}
+  fi
+
   
   echo "" >> ${slog} 
   echo "Run command:" >> ${slog} 
   echo "CITE-seq-Count -R1 ${fq1} -R2 ${fq2}" >> ${slog} 
   echo "-t ${hashtag} -cbf 1 -cbl 16 -umif 17 -umil 28" >> ${slog} 
-  echo "-wl ${barcodes} -o ${sout}" >> ${slog} 
+  echo "-wl ${unzipped} -o ${sout}" >> ${slog} 
   echo "" >> ${slog} 
   
   # Count with whitelist
@@ -67,8 +75,14 @@ if [[ ${answer} == "Y" ]] || [[ ${answer} == "y" ]] ; then
                  -R2 ${fq2} \
                  -t ${hashtag} \
                  -cbf 1 -cbl 16 -umif 17 -umil 28 \
-                 -wl ${barcodes} \
-                 -o ${sout} >> ${slog}  
+                 -wl ${unzipped} \
+                 -o ${sout} >> ${slog}
+                 
+  # Remove unzipped file
+  if [[ ${barcodes} == *"arcodes.tsv.gz" ]] ; then
+    rm ${unzipped}
+  fi
+  
 else
   echo "" >> ${slog} 
   echo "Run command:" >> ${slog} 
