@@ -2,19 +2,17 @@
 ## Run CITE-Seq-count for RNAseq data. Takes one directory containing all fastqs or file containing list of directories with fastqs, one directory per line. Output location is optional. If not supplied, output will be stored in home directory.
 ## Caveat: If list of directories is supplied, it is assumed that each directory is a sample
 ## For easy usage, submit job with ./citeseq.sh script
-## Usage: qsub ./qsub_citeseq_count.sh -v sample=${sample},outdir=${outdir},tmp_dir=${tmp_dir},log=${log},citeseq=${citeseq},conda=${conda},hashtag=${hashtag},answer=${answer},barcodes=${barcodes}
+## Usage: sbatch --export=sample=${sample},outdir=${outdir},tmp_dir=${tmp_dir},log=${log},citeseq=${citeseq},conda=${conda},hashtag=${hashtag},answer=${answer},barcodes=${barcodes} ./slurm_citeseq_count.sh 
 
 # Job Name
-#PBS -N Citeseq_count
+#SBATCH --job-name=Citeseq_count.$sample
 # Resources, e.g. a total time of 15 hours...
-#PBS -l walltime=15:00:00
+#SBATCH --time=15:00:00
 # Resources, ... and one node with 4 processors:
-#PBS -l nodes=1:ppn=4
-#PBS -l mem=64gb
-# stderr redirection
-#PBS -e Citeseq_count.err
-# stdout redirection
-#PBS -o Citeseq_count.log
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=8
+#SBATCH --mem 64000
+#SBATCH --mail-user=eleanor.fewings@bioquant.uni-heidelberg.de
 
 # Source bashrc
 source ~/.bashrc
@@ -97,6 +95,6 @@ else
                  -t ${hashtag} \
                  -cbf 1 -cbl 16 -umif 17 -umil 28 \
                  -cells 1000 \
-                 -o ${sout} &>> ${slog}
+                 -o ${sout} >> ${slog}
 fi
                

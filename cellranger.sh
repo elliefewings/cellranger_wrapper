@@ -110,7 +110,7 @@ echo "Job name: cellranger_count" >> ${log}
 echo "Time allocated: 15:00:00" >> ${log}
 echo "Time of submission: $(date +"%T %D")" >> ${log}
 echo "Resources allocated: nodes=1:ppn=8" >> ${log}
-echo "User: ${PBS_O_LOGNAME}" >> ${log}
+echo "User: ${USER}" >> ${log}
 echo "Log: ${log}" >> ${log}
 echo "Input: ${input}" >> ${log}
 echo "Reference trancriptome: ${ref}" >> ${log}
@@ -322,6 +322,6 @@ loc="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
 while read sample ; do
   echo "Submitting to cluster: ${sample}" >> ${log}
-  qsub "${loc}/qsub/qsub_cellranger_count.sh" -v sample=${sample},ref=${ref},outdir=${outdir},tmp_dir=${tmp_dir},log=${log},chem=${chem},conda=${conda}
+  sbatch --export=sample=${sample},ref=${ref},outdir=${outdir},tmp_dir=${tmp_dir},log=${log},chem=${chem},conda=${conda} "${loc}/slurm/slurm_cellranger_count.sh"
 done < ${sfile}
 

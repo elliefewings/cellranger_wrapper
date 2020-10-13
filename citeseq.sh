@@ -121,7 +121,7 @@ echo "Job name: Citeseq_count" >> ${log}
 echo "Time allocated: 15:00:00" >> ${log}
 echo "Time of submission: $(date +"%T %D")" >> ${log}
 echo "Resources allocated: nodes=1:ppn=8" >> ${log}
-echo "User: ${PBS_O_LOGNAME}" >> ${log}
+echo "User: ${USER}" >> ${log}
 echo "Log: ${log}" >> ${log}
 echo "Input: ${input}" >> ${log}
 echo "Hashtags: ${hashtag}" >> ${log}
@@ -242,5 +242,5 @@ while read -u 3 sample ; do
 
   #Submit
   echo "Submitting to cluster: ${sample}" >> ${log}
-  qsub "${loc}/qsub/qsub_citeseq_count.sh" -v sample=${sample},outdir=${outdir},tmp_dir=${tmp_dir},log=${log},citeseq=${citeseq},conda=${conda},hashtag=${hashtag},answer=${answer},barcodes=${barcodes}
+  sbatch --export=sample=${sample},outdir=${outdir},tmp_dir=${tmp_dir},log=${log},citeseq=${citeseq},conda=${conda},hashtag=${hashtag},answer=${answer},barcodes=${barcodes} "${loc}/qsub/qsub_citeseq_count.sh"
 done 3< ${sfile}

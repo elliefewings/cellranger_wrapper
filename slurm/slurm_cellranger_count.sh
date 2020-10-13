@@ -2,24 +2,20 @@
 ## Run count function of cell ranger align, process and quantify scRNAseq data. Takes one directory containing all fastqs or file containing list of directories with fastqs, one directory per line. Output location is optional. If not supplied, output will be stored in home directory.
 ## Caveat: If list of directories is supplied, it is assumed that each directory is a sample. If necassary, the directory name is used as a sample name for renaming purposes
 ## For easy usage, submit job with ./cellranger.sh script
-## Usage: qsub ./qsub_cellranger_count.sh -v input=/path/to/file/or/directory,ref=/path/to/reference/transcriptome,output=/path/to/desired/output/location[optional],chem=sequencingchemistry[optional]
+## Usage: sbatch --export=sample=${sample},ref=${ref},outdir=${outdir}[optional],tmp_dir=${tmp_dir},log=${log},chem=${chem}[optional],conda=${conda}[optional] ./slurm_cellranger_count.sh
 
 # Job Name
-#PBS -N cellranger_count
+#SBATCH --job-name=cellranger_count.$sample
 # Resources, e.g. a total time of 15 hours...
-#PBS -l walltime=15:00:00
+#SBATCH --time=15:00:00
 # Resources, ... and one node with 4 processors:
-#PBS -l nodes=1:ppn=8
-#PBS -l mem=64gb
-# stderr redirection
-#PBS -e cellranger_count.err
-# stdout redirection
-#PBS -o cellranger_count.slog
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=8
+#SBATCH --mem 64000
+#SBATCH --mail-user=eleanor.fewings@bioquant.uni-heidelberg.de
 
 # Source bashrc
 source ~/.bashrc
-
-module load bio/cellranger/3.0.2
 
 # Load conda environment if requested
 if [[ ! -z ${conda}  ]]; then
@@ -48,15 +44,15 @@ echo "" >> ${slog}
 # Change to output directory
 cd ${outdir}
 
-# Run cell ranger
+# Run cell ranger per sample
 echo "  Running Cell Ranger on: ${sample}" >> ${slog}
 cellranger count --id="${sample}_$(date +%Y%m%d)" \
-                   --transcriptome=${ref} \
-                   --fastqs=${tmp_dir} \
-                   --sample=${sample} \
-                   --expect-cells=1000 \
-                   --chemistry=${chem} \
-                   --localcores=8 &>> ${slog}
+                 --transcriptome=${ref} \
+                 --fastqs=${tmp_dir} \
+                 --sample=${sample} \
+                 --expect-cells=1000 \
+                 --chemistry=${chem} \
+                 --localcores=8 >> ${slog}
 
 echo "Cell ranger complete: $(date +%T)" >> ${slog}
 
