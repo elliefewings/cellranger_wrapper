@@ -242,5 +242,5 @@ while read -u 3 sample ; do
 
   #Submit
   echo "Submitting to cluster: ${sample}" >> ${log}
-  sbatch --export=sample=${sample},outdir=${outdir},tmp_dir=${tmp_dir},log=${log},citeseq=${citeseq},conda=${conda},hashtag=${hashtag},answer=${answer},barcodes=${barcodes} "${loc}/qsub/qsub_citeseq_count.sh"
+  sbatch --export=sample=${sample},outdir=${outdir},tmp_dir=${tmp_dir},log=${log},citeseq=${citeseq},conda=${conda},hashtag=${hashtag},answer=${answer},barcodes=${barcodes} "${loc}/slurm/slurm_citeseq_count.sh"
 done 3< ${sfile}

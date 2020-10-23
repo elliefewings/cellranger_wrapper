@@ -192,7 +192,7 @@ if [[ ${intype} == "file" ]] ; then
         if [[ ${fq} == *"_S"* ]] && [[ ${fq} == *"_L00"* ]] && [[ ( ${fq} == *"_R1"* ) || ( ${fq} == *"_R2"* ) || ( ${fq} == *"_I1"* )]] ; then
           sample=$(basename ${fq} | sed 's/_L.*/_/g' | sed 's/_S[1-9]*_//g' | sed 's/_[1-9].fastq.gz//g')
           echo -e "${sample}\t${tmpdir}/${fq}" >> ${tfile}
-          cp ${fq} ${tmp_dir}
+          rsync -a ${fq} ${tmp_dir}
         else
           echo "    Incorrect fastq naming format for ${fq}. Renaming file" >> ${log}
           # Infer sample name from directory name
@@ -229,7 +229,7 @@ if [[ ${intype} == "file" ]] ; then
         # Copy file with new name to tmp directory and record name change
         newname="${tmp_dir}/${sample}_S1_${lane}_${read}_001.fastq.gz"
         echo -e "${fq}\t${newname}" >> ${names}
-        cp ${fq} ${newname}
+        rsync -a ${fq} ${newname}
         echo -e "${sample}\t${newname}" >> ${tfile}
       fi
     done
@@ -243,7 +243,7 @@ if [[ ${intype} == "directory" ]] ; then
     if [[ ${fq} == *"_S"* ]] && [[ ${fq} == *"_L00"* ]] && [[ ( ${fq} == *"_R1"* ) || ( ${fq} == *"_R2"* ) || ( ${fq} == *"_I1"* ) ]] ; then
       sample=$(basename ${fq} | sed 's/_L.*/_/g' | sed 's/_S[1-9]*_//g' | sed 's/_[1-9].fastq.gz//g')
       echo -e "${sample}\t${tmpdir}/${fq}" >> ${tfile}
-      cp ${fq} ${tmp_dir}
+      rsync -a ${fq} ${tmp_dir}
     else
       echo "  Incorrect fastq naming format for ${fq}. Renaming file" >> ${log}
       # Infer sample name from previous file name
@@ -280,7 +280,7 @@ if [[ ${intype} == "directory" ]] ; then
       # Copy file with new name to tmp directory and record name change
       newname="${tmp_dir}/${sample}_S1_${lane}_${read}_001.fastq.gz"
       echo -e "${fq}\t${newname}" >> ${names}
-      cp ${fq} ${newname}
+      rsync -a ${fq} ${newname}
       echo -e "${sample}\t${newname}" >> ${tfile}
     fi
   done

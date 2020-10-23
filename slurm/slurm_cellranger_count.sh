@@ -10,7 +10,7 @@
 #SBATCH --time=15:00:00
 # Resources, ... and one node with 4 processors:
 #SBATCH --nodes=1
-#SBATCH --ntasks-per-node=8
+#SBATCH --ntasks-per-node=1
 #SBATCH --mem 64000
 #SBATCH --mail-user=eleanor.fewings@bioquant.uni-heidelberg.de
 
@@ -52,7 +52,9 @@ cellranger count --id="${sample}_$(date +%Y%m%d)" \
                  --sample=${sample} \
                  --expect-cells=1000 \
                  --chemistry=${chem} \
-                 --localcores=8 >> ${slog}
+                 --jobmode=local \
+                 --localcores=1 \
+                 --localmem=57 &>> ${slog}
 
 echo "Cell ranger complete: $(date +%T)" >> ${slog}
 

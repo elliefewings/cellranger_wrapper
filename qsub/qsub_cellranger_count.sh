@@ -6,8 +6,6 @@
 
 # Job Name
 #PBS -N cellranger_count
-# Resources, e.g. a total time of 15 hours...
-#PBS -l walltime=15:00:00
 # Resources, ... and one node with 4 processors:
 #PBS -l nodes=1:ppn=8
 #PBS -l mem=64gb
@@ -47,10 +45,10 @@ echo "" >> ${slog}
 
 # Change to output directory
 cd ${outdir}
-
+#--id="${sample}_$(date +%Y%m%d)"
 # Run cell ranger
 echo "  Running Cell Ranger on: ${sample}" >> ${slog}
-cellranger count --id="${sample}_$(date +%Y%m%d)" \
+cellranger count --id="${sample}_20201015" \
                    --transcriptome=${ref} \
                    --fastqs=${tmp_dir} \
                    --sample=${sample} \

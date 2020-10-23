@@ -67,7 +67,7 @@ if [[ ${answer} == "Y" ]] || [[ ${answer} == "y" ]] ; then
   echo "Run command:" >> ${slog} 
   echo "CITE-seq-Count -R1 ${fq1} -R2 ${fq2}" >> ${slog} 
   echo "-t ${hashtag} -cbf 1 -cbl 16 -umif 17 -umil 28" >> ${slog} 
-  echo "-wl ${unzipped} -o ${sout}" >> ${slog} 
+  echo "-wl ${unzipped} -cells 1000 -o ${sout}" >> ${slog} 
   echo "" >> ${slog} 
   
   # Count with whitelist
@@ -76,6 +76,7 @@ if [[ ${answer} == "Y" ]] || [[ ${answer} == "y" ]] ; then
                  -t ${hashtag} \
                  -cbf 1 -cbl 16 -umif 17 -umil 28 \
                  -wl ${unzipped} \
+                 -cells 1000 \
                  -o ${sout} >> ${slog}
                  
   # Remove unzipped file

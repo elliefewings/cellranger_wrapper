@@ -11,7 +11,7 @@
 # Resources, ... and one node with 4 processors:
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=8
-#SBATCH --mem 64000
+#SBATCH --mem 100000
 #SBATCH --mail-user=eleanor.fewings@bioquant.uni-heidelberg.de
 
 # Source bashrc
@@ -65,7 +65,7 @@ if [[ ${answer} == "Y" ]] || [[ ${answer} == "y" ]] ; then
   echo "Run command:" >> ${slog} 
   echo "CITE-seq-Count -R1 ${fq1} -R2 ${fq2}" >> ${slog} 
   echo "-t ${hashtag} -cbf 1 -cbl 16 -umif 17 -umil 28" >> ${slog} 
-  echo "-wl ${unzipped} -o ${sout}" >> ${slog} 
+  echo "-wl ${unzipped} -cells 1000 -o ${sout}" >> ${slog} 
   echo "" >> ${slog} 
   
   # Count with whitelist
@@ -74,7 +74,8 @@ if [[ ${answer} == "Y" ]] || [[ ${answer} == "y" ]] ; then
                  -t ${hashtag} \
                  -cbf 1 -cbl 16 -umif 17 -umil 28 \
                  -wl ${unzipped} \
-                 -o ${sout} >> ${slog}
+                 -cells 1000 \
+                 -o ${sout} &>> ${slog}
                  
   # Remove unzipped file
   if [[ ${barcodes} == *"arcodes.tsv.gz" ]] ; then
@@ -95,6 +96,6 @@ else
                  -t ${hashtag} \
                  -cbf 1 -cbl 16 -umif 17 -umil 28 \
                  -cells 1000 \
-                 -o ${sout} >> ${slog}
+                 -o ${sout} &>> ${slog}
 fi
                
