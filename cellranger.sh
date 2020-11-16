@@ -4,7 +4,7 @@
 # Ellie Fewings, 22Jul2020
 
 # Running:
-# ./cellranger.sh -i <input file or directory> -r <reference trancriptome> -o <output location>[optional] -s <sequencing chemistry>[optional] -c <conda environment>[optional] -h <help>
+# ./cellranger.sh -i <input file or directory> -r <reference trancriptome> -o <output location>[optional] -s <sequencing chemistry>[optional] -h <help>
 
 # Source bashrc
 source ~/.bashrc
@@ -30,14 +30,13 @@ helpFunction()
   echo ""
   echo "Version: 0.1"
   echo ""
-  echo "Usage: ./cellranger.sh -i <input file or directory> -r <reference trancriptome> -o <output location>[optional] -s <sequencing chemistry>[optional] -c <conda environment>[optional] -h <help>"
+  echo "Usage: ./cellranger.sh -i <input file or directory> -r <reference trancriptome> -o <output location>[optional] -s <sequencing chemistry>[optional] -h <help>"
   echo ""
   echo "Options:"
       echo -e "\t-i\tInput: Path to directory containing all fastqs or file containing list of directories with fastqs, one directory per line [required]"
       echo -e "\t-r\tReference transcriptome: Path to directory containing reference transcriptome [required]"
       echo -e "\t-o\tOutput directory: Path to location where output will be generated [default=$HOME]"
       echo -e "\t-s\tSequencing chemistry: Sequencing chemistry used in assay (see cellranger count --chemistry options for details). Should be left on 'autodetect' mode (default) unless error occurs [default=auto]"
-      echo -e "\t-c\tConda environment: Name of conda environment with Cellranger installed (unless it is available on path or from module) [default=module]"
       echo -e "\t-h\tHelp: Does what it says on the tin"
   echo ""
 }
@@ -47,7 +46,7 @@ chem="auto"
 output="$HOME"
 
 # Accept arguments specified by user
-while getopts "i:r:o:s:c:h" opt; do
+while getopts "i:r:o:s:h" opt; do
   case $opt in
     i ) input="$OPTARG"
     ;;
@@ -56,8 +55,6 @@ while getopts "i:r:o:s:c:h" opt; do
     o ) output="$OPTARG"
     ;;
     s ) chem="$OPTARG"
-    ;;
-    c ) conda="$OPTARG"
     ;;
     h ) helpFunction ; exit 0
     ;;
@@ -107,7 +104,6 @@ echo " Submission " >> ${log}
 echo "------------" >> ${log}
 echo "" >> ${log}
 echo "Job name: cellranger_count" >> ${log}
-echo "Time allocated: 15:00:00" >> ${log}
 echo "Time of submission: $(date +"%T %D")" >> ${log}
 echo "Resources allocated: nodes=1:ppn=8" >> ${log}
 echo "User: ${USER}" >> ${log}
@@ -322,6 +318,6 @@ loc="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
 while read sample ; do
   echo "Submitting to cluster: ${sample}" >> ${log}
-  sbatch --export=sample=${sample},ref=${ref},outdir=${outdir},tmp_dir=${tmp_dir},log=${log},chem=${chem},conda=${conda} "${loc}/slurm/slurm_cellranger_count.sh"
+  sbatch --export=sample=${sample},ref=${ref},outdir=${outdir},tmp_dir=${tmp_dir},log=${log},chem=${chem} "${loc}/slurm/slurm_cellranger_count.sh"
 done < ${sfile}
 

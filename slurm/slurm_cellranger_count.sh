@@ -2,25 +2,21 @@
 ## Run count function of cell ranger align, process and quantify scRNAseq data. Takes one directory containing all fastqs or file containing list of directories with fastqs, one directory per line. Output location is optional. If not supplied, output will be stored in home directory.
 ## Caveat: If list of directories is supplied, it is assumed that each directory is a sample. If necassary, the directory name is used as a sample name for renaming purposes
 ## For easy usage, submit job with ./cellranger.sh script
-## Usage: sbatch --export=sample=${sample},ref=${ref},outdir=${outdir}[optional],tmp_dir=${tmp_dir},log=${log},chem=${chem}[optional],conda=${conda}[optional] ./slurm_cellranger_count.sh
+## Usage: sbatch --export=sample=${sample},ref=${ref},outdir=${outdir}[optional],tmp_dir=${tmp_dir},log=${log},chem=${chem}[optional] ./slurm_cellranger_count.sh
 
 # Job Name
 #SBATCH --job-name=cellranger_count.$sample
-# Resources, e.g. a total time of 15 hours...
-#SBATCH --time=15:00:00
 # Resources, ... and one node with 4 processors:
 #SBATCH --nodes=1
-#SBATCH --ntasks-per-node=1
+#SBATCH --ntasks-per-node=8
 #SBATCH --mem 64000
 #SBATCH --mail-user=eleanor.fewings@bioquant.uni-heidelberg.de
 
 # Source bashrc
 source ~/.bashrc
 
-# Load conda environment if requested
-if [[ ! -z ${conda}  ]]; then
-  conda activate ${conda}
-fi
+# Load cellranger module
+module load bio/cellranger/3.0.2
 
 # Create sample slog
 slog="${tmp_dir}/${sample}_cellranger.slog"
