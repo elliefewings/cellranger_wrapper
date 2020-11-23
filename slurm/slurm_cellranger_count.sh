@@ -9,6 +9,7 @@
 # Resources, ... and one node with 4 processors:
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=8
+#SBATCH --time=48:00:00
 #SBATCH --mem 64000
 #SBATCH --mail-user=eleanor.fewings@bioquant.uni-heidelberg.de
 
@@ -42,6 +43,7 @@ cd ${outdir}
 
 # Run cell ranger per sample
 echo "  Running Cell Ranger on: ${sample}" >> ${slog}
+
 cellranger count --id="${sample}_$(date +%Y%m%d)" \
                  --transcriptome=${ref} \
                  --fastqs=${tmp_dir} \

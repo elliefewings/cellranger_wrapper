@@ -98,7 +98,7 @@ mkdir -p ${outdir}
 loc="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
 # Create temporary directory
-tmp_dir=$(mktemp -d -t tmp-XXXX-$(date +%Y%m%d) --tmpdir=${outdir})
+tmp_dir=$(mktemp -d -p ${outdir})
 
 # Find STAR
 set +e
